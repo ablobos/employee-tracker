@@ -229,3 +229,53 @@ function addEmployee(title, salary, department_id) {
     })
     .then(() => displayMenu());
 }
+
+
+function viewDepartments() {
+    return getDepartments()
+    .then(departments => {
+        console.log('\n');
+        console.table(departments);
+        return displayMenu();
+    });
+}
+
+function viewRoles() {
+    return getRoles()
+    .then(roles => {
+        console.log('\n');
+        console.table(roles);
+        return displayMenu();
+    });
+}
+
+function viewEmployees() {
+    return getEmployees()
+    .then(employees => {
+        console.log('\n');
+        console.table(employees);
+        return displayMenu();
+    });
+}
+
+function viewEmployeesByManager () {
+    return getEmployees()
+    .then(employees => {
+        return inquirer.prompt([
+            {
+                type: 'list',
+                message: 'Select a manager:',
+                name: 'manager',
+                choices: employees.map(({ id, first_name, last_name, manager_id }) => ({ name: `${first_name} ${last_name}`, value: id })),
+                loop: false
+            }
+        ]).then(({ manager }) => {
+            return employees.filter(({ manager_id }) => manager_id === manager);
+        });
+    })
+    .then(employees => {
+        console.log('\n');
+        console.table(employees);
+        return displayMenu();
+    });
+}
