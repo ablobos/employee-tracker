@@ -468,3 +468,43 @@ function deleteRole() {
     })
     .then(() => displayMenu());
 }
+
+function deleteEmployee() {
+    return getEmployees()
+    .then(employees => {
+        return inquirer.prompt([
+            {
+                type: 'list',
+                message: 'Which employee would you like to delete?',
+                name: 'id',
+                choices: employees.map(({ id, first_name, last_name }) => ({ name: `${first_name} ${last_name}`, value: id })),
+                loop: false
+            }
+        ]);
+    })
+    .then(({ id }) => {
+        return new Promise((resolve,reject) => {
+            connection.query(
+                `UPDATE employees SET manager_id=NULL WHERE manager_id=?;`,
+                [id],
+                (err) => {
+                    if (err) reject(err);
+                    else resolve();
+                }
+            );
+        })
+        .then(() => {
+            return new Promise((resolve, reject) => {
+                connection.query(
+                    `DELETE FROM employees WHERE id=?;`,
+                    [id],
+                    (err) => {
+                        if (err) reject(err);
+                        else resolve();
+                    }
+                );
+            })
+        });
+    })
+    .then(() => displayMenu());
+}
