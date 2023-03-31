@@ -428,3 +428,43 @@ function deleteDepartment() {
     })
     .then(() => displayMenu());
 }
+
+function deleteRole() {
+    return getRoles()
+    .then(roles => {
+        return inquirer.prompt([
+            {
+                type: 'list',
+                message: 'Which role would you like to delete?',
+                name: 'id',
+                choices: roles.map(({ id, title }) => ({ name: title, value: id })),
+                loop: false
+            }
+        ]);
+    })
+    .then(({ id }) => {
+        return new Promise((resolve, reject) => {
+            connection.query(
+                `DELETE FROM employees WHERE role_id=?;`,
+                [id],
+                (err) => {
+                    if (err) reject(err);
+                    else resolve();
+                }
+            );
+        })
+        .then(() => {
+            return new Promise((resolve, reject) => {
+                connection.query(
+                    `DELETE FROM roles WHERE id=?;`,
+                    [id],
+                    (err) => {
+                        if (err) reject(err);
+                        else resolve();
+                    }
+                );
+            })
+        });
+    })
+    .then(() => displayMenu());
+}
