@@ -4,13 +4,13 @@ CREATE DATABASE employeesDB;
 
 USE employeesDB;
 
-CREATE TABLE department (
+CREATE TABLE departments (
     id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(45) NOT NULL,
     PRIMARY KEY (id)
 );
 
-CREATE TABLE role (
+CREATE TABLE roles (
     id INT NOT NULL AUTO_INCREMENT,
     title VARCHAR(45) NOT NULL,
     salary DECIMAL(10,2) NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE role (
     FOREIGN KEY(department_id) REFERENCES departments(id)
 );
 
-CREATE TABLE employee (
+CREATE TABLE employees (
     id INT NOT NULL AUTO_INCREMENT,
     first_name VARCHAR(45) NOT NULL,
     last_name VARCHAR(45) NOT NULL,
