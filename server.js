@@ -177,4 +177,55 @@ function addRole() {
       });
     })
     .then(() => displayMenu());
+};
+
+function addEmployee(title, salary, department_id) {
+    return Promise.all([getRoles(), getEmployees()])
+    .then(([roles, employees]) => {
+        return inquirer
+        .prompt([
+            {
+                type: 'input',
+                message: "What is the first name of the employee?",
+                name: 'first_name'
+            },
+            {
+                type: 'input',
+                message: 'What is the last name of the employee?',
+                name: 'last_name'
+            },
+            {
+                type: 'list',
+                message: 'What role is this employee?',
+                name: 'role_id',
+                choices: roles.map(({ id, title }) => ({ name: title, value: id })),
+                loop: false
+            },
+            {
+                type: 'list',
+                message: 'Who is the manager responsible for the employee?',
+                name: 'manager_id',
+                choices: [...employees.map(({ id, first_name, last_name }) => ({ name: `${first_name} ${last_name}`, value: id })), 'None'],
+                loop: false
+            }
+        ]);
+    })
+    .then(({ first_name, last_name, role_id, manager_id }) => {
+        return new Promise((resolve, reject) => {
+            connection.query(
+                `INSERT INTO employees SET ?;`,
+                {
+                    first_name: first_name,
+                    last_name: last_name,
+                    role_id: role_id,
+                    manager_id: manager_id === 'None' ? undefined : manager_id
+                },
+                (err) => {
+                    if (err) reject(err);
+                    else resolve();
+                }
+            );
+        });
+    })
+    .then(() => displayMenu());
 }
