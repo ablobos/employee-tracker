@@ -1,4 +1,4 @@
-use employeesDV;
+use employeesDB;
 
 INSERT INTO departments (name)
 VALUES("Sales");
