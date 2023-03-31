@@ -177,143 +177,202 @@ function addRole() {
       });
     })
     .then(() => displayMenu());
-};
+}
 
 function addEmployee(title, salary, department_id) {
-    return Promise.all([getRoles(), getEmployees()])
+  return Promise.all([getRoles(), getEmployees()])
     .then(([roles, employees]) => {
-        return inquirer
-        .prompt([
-            {
-                type: 'input',
-                message: "What is the first name of the employee?",
-                name: 'first_name'
-            },
-            {
-                type: 'input',
-                message: 'What is the last name of the employee?',
-                name: 'last_name'
-            },
-            {
-                type: 'list',
-                message: 'What role is this employee?',
-                name: 'role_id',
-                choices: roles.map(({ id, title }) => ({ name: title, value: id })),
-                loop: false
-            },
-            {
-                type: 'list',
-                message: 'Who is the manager responsible for the employee?',
-                name: 'manager_id',
-                choices: [...employees.map(({ id, first_name, last_name }) => ({ name: `${first_name} ${last_name}`, value: id })), 'None'],
-                loop: false
-            }
-        ]);
+      return inquirer.prompt([
+        {
+          type: "input",
+          message: "What is the first name of the employee?",
+          name: "first_name",
+        },
+        {
+          type: "input",
+          message: "What is the last name of the employee?",
+          name: "last_name",
+        },
+        {
+          type: "list",
+          message: "What role is this employee?",
+          name: "role_id",
+          choices: roles.map(({ id, title }) => ({ name: title, value: id })),
+          loop: false,
+        },
+        {
+          type: "list",
+          message: "Who is the manager responsible for the employee?",
+          name: "manager_id",
+          choices: [
+            ...employees.map(({ id, first_name, last_name }) => ({
+              name: `${first_name} ${last_name}`,
+              value: id,
+            })),
+            "None",
+          ],
+          loop: false,
+        },
+      ]);
     })
     .then(({ first_name, last_name, role_id, manager_id }) => {
-        return new Promise((resolve, reject) => {
-            connection.query(
-                `INSERT INTO employees SET ?;`,
-                {
-                    first_name: first_name,
-                    last_name: last_name,
-                    role_id: role_id,
-                    manager_id: manager_id === 'None' ? undefined : manager_id
-                },
-                (err) => {
-                    if (err) reject(err);
-                    else resolve();
-                }
-            );
-        });
+      return new Promise((resolve, reject) => {
+        connection.query(
+          `INSERT INTO employees SET ?;`,
+          {
+            first_name: first_name,
+            last_name: last_name,
+            role_id: role_id,
+            manager_id: manager_id === "None" ? undefined : manager_id,
+          },
+          (err) => {
+            if (err) reject(err);
+            else resolve();
+          }
+        );
+      });
     })
     .then(() => displayMenu());
 }
 
-
 function viewDepartments() {
-    return getDepartments()
-    .then(departments => {
-        console.log('\n');
-        console.table(departments);
-        return displayMenu();
-    });
+  return getDepartments().then((departments) => {
+    console.log("\n");
+    console.table(departments);
+    return displayMenu();
+  });
 }
 
 function viewRoles() {
-    return getRoles()
-    .then(roles => {
-        console.log('\n');
-        console.table(roles);
-        return displayMenu();
-    });
+  return getRoles().then((roles) => {
+    console.log("\n");
+    console.table(roles);
+    return displayMenu();
+  });
 }
 
 function viewEmployees() {
-    return getEmployees()
-    .then(employees => {
-        console.log('\n');
-        console.table(employees);
-        return displayMenu();
-    });
+  return getEmployees().then((employees) => {
+    console.log("\n");
+    console.table(employees);
+    return displayMenu();
+  });
 }
 
-function viewEmployeesByManager () {
-    return getEmployees()
-    .then(employees => {
-        return inquirer.prompt([
-            {
-                type: 'list',
-                message: 'Select a manager:',
-                name: 'manager',
-                choices: employees.map(({ id, first_name, last_name, manager_id }) => ({ name: `${first_name} ${last_name}`, value: id })),
-                loop: false
-            }
-        ]).then(({ manager }) => {
-            return employees.filter(({ manager_id }) => manager_id === manager);
+function viewEmployeesByManager() {
+  return getEmployees()
+    .then((employees) => {
+      return inquirer
+        .prompt([
+          {
+            type: "list",
+            message: "Select a manager:",
+            name: "manager",
+            choices: employees.map(
+              ({ id, first_name, last_name, manager_id }) => ({
+                name: `${first_name} ${last_name}`,
+                value: id,
+              })
+            ),
+            loop: false,
+          },
+        ])
+        .then(({ manager }) => {
+          return employees.filter(({ manager_id }) => manager_id === manager);
         });
     })
-    .then(employees => {
-        console.log('\n');
-        console.table(employees);
-        return displayMenu();
+    .then((employees) => {
+      console.log("\n");
+      console.table(employees);
+      return displayMenu();
     });
 }
 
 function updateRole() {
-    return Promise.all([getEmployees(), getRoles()])
+  return Promise.all([getEmployees(), getRoles()])
     .then(([employees, roles]) => {
-        return inquirer.prompt([
-            {
-                type: 'list',
-                message: 'Which employee would you like to update?',
-                name: 'employee',
-                choices: employees.map(({ id, first_name, last_name, role_id }) => ({ name: `${first_name} ${last_name}`, value: { id: id, role_id: role_id } })),
-                loop: false
-            },
-            {
-                type: 'list',
-                message: `What is this employee's new role?`,
-                name: 'role_id',
-                choices: ({ employee: { role_id } }) => {
-                    return roles.filter(({ id }) => id !== role_id)
-                    .map(({ id, title }) => ({ name: title, value: id }))
-                },
-                loop: false
-            }
-        ]);
+      return inquirer.prompt([
+        {
+          type: "list",
+          message: "Which employee would you like to update?",
+          name: "employee",
+          choices: employees.map(({ id, first_name, last_name, role_id }) => ({
+            name: `${first_name} ${last_name}`,
+            value: { id: id, role_id: role_id },
+          })),
+          loop: false,
+        },
+        {
+          type: "list",
+          message: `What is this employee's new role?`,
+          name: "role_id",
+          choices: ({ employee: { role_id } }) => {
+            return roles
+              .filter(({ id }) => id !== role_id)
+              .map(({ id, title }) => ({ name: title, value: id }));
+          },
+          loop: false,
+        },
+      ]);
     })
     .then(({ employee: { id }, role_id }) => {
-        return new Promise((resolve, reject) => {
-            connection.query(
-                `UPDATE employees SET role_id=? WHERE id=?;`,
-                [role_id, id],
-                (err) => {
-                    if (err) reject(err);
-                    else resolve();
-                }
-            );
-        });
+      return new Promise((resolve, reject) => {
+        connection.query(
+          `UPDATE employees SET role_id=? WHERE id=?;`,
+          [role_id, id],
+          (err) => {
+            if (err) reject(err);
+            else resolve();
+          }
+        );
+      });
+    })
+    .then(() => displayMenu());
+}
+
+function updateEmployeeManager() {
+  return getEmployees()
+    .then((employees) => {
+      return inquirer.prompt([
+        {
+          type: "list",
+          message: `Which employee's manager would you like to update?`,
+          name: "employee",
+          choices: employees.map(
+            ({ id, first_name, last_name, manager_id }) => ({
+              name: `${first_name} ${last_name}`,
+              value: { id: id, manager_id: manager_id },
+            })
+          ),
+          loop: false,
+        },
+        {
+          type: "list",
+          message: `Who is this employee's new manager?`,
+          name: "manager_id",
+          choices: ({ employee: { id: chosen_id, manager_id } }) => {
+            return employees
+              .filter(({ id }) => id !== chosen_id && id !== manager_id)
+              .map(({ id, first_name, last_name }) => ({
+                name: `${first_name} ${last_name}`,
+                value: id,
+              }));
+          },
+          loop: false,
+        },
+      ]);
+    })
+    .then(({ employee: { id }, manager_id }) => {
+      return new Promise((resolve, reject) => {
+        connection.query(
+          `UPDATE employees SET manager_id=? WHERE id=?;`,
+          [manager_id, id],
+          (err) => {
+            if (err) reject(err);
+            else resolve();
+          }
+        );
+      });
     })
     .then(() => displayMenu());
 }
