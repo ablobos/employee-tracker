@@ -279,3 +279,41 @@ function viewEmployeesByManager () {
         return displayMenu();
     });
 }
+
+function updateRole() {
+    return Promise.all([getEmployees(), getRoles()])
+    .then(([employees, roles]) => {
+        return inquirer.prompt([
+            {
+                type: 'list',
+                message: 'Which employee would you like to update?',
+                name: 'employee',
+                choices: employees.map(({ id, first_name, last_name, role_id }) => ({ name: `${first_name} ${last_name}`, value: { id: id, role_id: role_id } })),
+                loop: false
+            },
+            {
+                type: 'list',
+                message: `What is this employee's new role?`,
+                name: 'role_id',
+                choices: ({ employee: { role_id } }) => {
+                    return roles.filter(({ id }) => id !== role_id)
+                    .map(({ id, title }) => ({ name: title, value: id }))
+                },
+                loop: false
+            }
+        ]);
+    })
+    .then(({ employee: { id }, role_id }) => {
+        return new Promise((resolve, reject) => {
+            connection.query(
+                `UPDATE employees SET role_id=? WHERE id=?;`,
+                [role_id, id],
+                (err) => {
+                    if (err) reject(err);
+                    else resolve();
+                }
+            );
+        });
+    })
+    .then(() => displayMenu());
+}
