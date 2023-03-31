@@ -48,3 +48,73 @@ function getEmployees() {
         );
     })
 }
+
+function displayMenu() {
+    return inquirer.prompt([
+        {
+            type: 'list',
+            message: 'Select an option!',
+            name: 'choice',
+            choices: [
+                {
+                    name: 'Add Department',
+                    value: addDepartment
+                },
+                {
+                    name: 'Add Role',
+                    value: addRole,
+                },
+                {
+                    name: 'Add Employee',
+                    value: addEmployee
+                },
+                {
+                    name: 'View Departments',
+                    value: viewDepartments,
+                },
+                {
+                    name: 'View Roles',
+                    value: viewRoles
+                },
+                {
+                    name: 'View Employees',
+                    value: viewEmployees
+                },
+                {
+                    name: 'View Employees By Manager',
+                    value: viewEmployeesByManager
+                },
+                {
+                    name: 'Update Employee Role',
+                    value: updateRole
+                },
+                {
+                    name: "Update Employee Manager",
+                    value: updateEmployeeManager
+                },
+                {
+                    name: 'Delete Department',
+                    value: deleteDepartment
+                },
+                {
+                    name: 'Delete Role',
+                    value: deleteRole
+                },
+                {
+                    name: 'Delete Employee',
+                    value: deleteEmployee
+                },
+                {
+                    name: "Get Total Department Budget",
+                    value: viewDepartmentBudget
+                },
+                {
+                    name: 'Exit',
+                    value: exit
+                },
+            ],
+            loop: false
+        }
+    ])
+    .then(({ choice }) => choice());
+}
