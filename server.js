@@ -508,3 +508,45 @@ function deleteEmployee() {
     })
     .then(() => displayMenu());
 }
+
+function viewDepartmentBudget() {
+    let departmentName;
+    return getDepartments()
+    .then(departments => {
+        return inquirer.prompt([
+            {
+                type: 'list',
+                message: 'Choose a department:',
+                name: 'department',
+                choices: departments.map(({ id, name }) => ({ name: name, value: {id: id, name: name} })),
+                loop: false
+            }
+        ]);
+    })
+    .then(({ department: {id, name} }) => {
+        departmentName = name;
+        return new Promise((resolve, reject) => {
+            connection.query(
+                `SELECT SUM(roles.salary) as TotalBudget FROM employees LEFT JOIN roles on employees.role_id=roles.id WHERE roles.department_id=?;`,
+                [id],
+                (err, res) => {
+                    if (err) reject(err);
+                    else resolve(res);
+                }
+            );
+        })
+    })
+    .then(([{ TotalBudget }]) => {
+        console.log('\n');
+        console.log(`Total Utilized Budget for ${departmentName}: ${TotalBudget}`);
+        console.log('\n');
+        displayMenu()
+    });
+}
+
+function exit() {
+    console.log('Goodbye!');
+    connection.end();
+}
+
+displayMenu();
