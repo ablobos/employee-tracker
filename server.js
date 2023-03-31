@@ -376,3 +376,55 @@ function updateEmployeeManager() {
     })
     .then(() => displayMenu());
 }
+
+function deleteDepartment() {
+    return getDepartments()
+    .then(departments => {
+        return inquirer.prompt([
+            {
+                type: 'list',
+                message: 'Which department would you like to delete?',
+                name: 'id',
+                choices: departments.map(({ id, name }) => ({ name: name, value: id })),
+                loop: false
+            }
+        ]);
+    })
+    .then(({ id }) => {
+        return new Promise((resolve, reject) => {
+            connection.query(
+                `DELETE employees FROM employees LEFT JOIN roles on employees.role_id=roles.id WHERE roles.department_id=?;`,
+                [id],
+                (err) => {
+                    if (err) reject(err);
+                    else resolve();
+                }
+            );
+        })
+        .then(() => {
+            return new Promise((resolve, reject) => {
+                connection.query(
+                    `DELETE FROM roles WHERE department_id=?;`,
+                    [id],
+                    (err) => {
+                        if (err) reject(err);
+                        else resolve();
+                    }
+                );
+            })
+        })
+        .then(() => {
+            return new Promise((resolve, reject) => {
+                connection.query(
+                    `DELETE FROM departments where id=?;`,
+                    [id],
+                    (err) => {
+                        if (err) reject(err);
+                        else resolve();
+                    }
+                );
+            })
+        });
+    })
+    .then(() => displayMenu());
+}
