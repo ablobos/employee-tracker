@@ -25,3 +25,26 @@ function getDepartments() {
     })
 }
 
+function getRoles() {
+    return new Promise((resolve, reject) => {
+        connection.query(
+            `SELECT * FROM roles;`,
+            (err, res) => {
+                if (err) reject(err);
+                else resolves(res);
+            }
+        );
+    })
+}
+
+function getEmployees() {
+    return new Promise((resolve, reject) => {
+        connection.query(
+            `SELECT * FROM employees;`,
+            (err, res) => {
+                if (err) reject(err);
+                else resolve(res);
+            }
+        );
+    })
+}
