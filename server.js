@@ -134,3 +134,47 @@ function addDepartment() {
     })
     .then(() => displayMenu());
 }
+
+function addRole() {
+  return getDepartments()
+    .then((departments) => {
+      return inquirer.prompt([
+        {
+          type: "input",
+          message: "What is the title of the role you wish to create?",
+          name: "title",
+        },
+        {
+          type: "number",
+          message: "What is the salary of that role?",
+          name: "salary",
+        },
+        {
+          type: "list",
+          message: "Which department is this role?",
+          name: "department_id",
+          choices: departments.map(({ id, name }) => ({
+            name: name,
+            value: id,
+          })),
+        },
+      ]);
+    })
+    .then(({ title, salary, department_id }) => {
+      return new Promise((resolve, reject) => {
+        connection.query(
+          `INSERT INTO roles SET ?;`,
+          {
+            title: title,
+            salary: salary,
+            department_id: department_id,
+          },
+          (err) => {
+            if (err) reject(err);
+            else resolve();
+          }
+        );
+      });
+    })
+    .then(() => displayMenu());
+}
