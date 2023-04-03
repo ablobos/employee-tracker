@@ -100,15 +100,17 @@ const promptUser = () => {
   });
 };
 
-showDepartments = () => {
+showDepartments = async () => {
   console.log('Showing all departments...\n');
   const sql = `SELECT department.id AS id, department.name AS department FROM department`; 
 
-  connection.promise().query(sql, (err, rows) => {
-    if (err) throw err;
+  try {
+    const [rows, fields] = await connection.promise().query(sql);
     console.table(rows);
     promptUser();
-  });
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 showRoles = () => {
