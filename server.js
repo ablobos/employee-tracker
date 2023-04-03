@@ -113,21 +113,23 @@ showDepartments = async () => {
   }
 };
 
-showRoles = () => {
+showRoles = async () => {
   console.log('Showing all roles...\n');
 
   const sql = `SELECT role.id, role.title, department.name AS department
                FROM role
                INNER JOIN department ON role.department_id = department.id`;
   
-  connection.promise().query(sql, (err, rows) => {
-    if (err) throw err; 
-    console.table(rows); 
+  try {
+    const [rows, fields] = await connection.promise().query(sql);
+    console.table(rows);
     promptUser();
-  })
+  } catch (err) {
+    console.log(err);
+  }
 };
 
-showEmployees = () => {
+showEmployees = async () => {
   console.log('Showing all employees...\n'); 
   const sql = `SELECT employee.id, 
                       employee.first_name, 
@@ -141,40 +143,43 @@ showEmployees = () => {
                       LEFT JOIN department ON role.department_id = department.id
                       LEFT JOIN employee manager ON employee.manager_id = manager.id`;
 
-  connection.promise().query(sql, (err, rows) => {
-    if (err) throw err; 
+  try {
+    const [rows, fields] = await connection.promise().query(sql);
     console.table(rows);
     promptUser();
-  });
+  } catch (err) {
+    console.log(err);
+  }
 };
 
-addDepartment = () => {
-  inquirer.prompt([
-    {
-      type: 'input', 
-      name: 'addDept',
-      message: "What department do you want to add?",
-      validate: addDept => {
-        if (addDept) {
+addDepartment = async () => {
+  try {
+    const answer = await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'addDept',
+        message: "What department do you want to add?",
+        validate: addDept => {
+          if (addDept) {
             return true;
-        } else {
+          } else {
             console.log('Please enter a department');
             return false;
+          }
         }
       }
-    }
-  ])
-    .then(answer => {
-      const sql = `INSERT INTO department (name)
-                  VALUES (?)`;
-      connection.query(sql, answer.addDept, (err, result) => {
-        if (err) throw err;
-        console.log('Added ' + answer.addDept + " to departments!"); 
+    ])
 
-        showDepartments();
-    });
-  });
-};
+    const sql = `INSERT INTO department (name)
+    Values (?)`;
+    const result = await connection.promise().query(sql, answer.addDept);
+    console.log('Added ' + answer.addDept + " to departments!");
+
+    await showDepartments();
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 addRole = () => {
   inquirer.prompt([
