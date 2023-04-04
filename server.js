@@ -34,8 +34,8 @@ function menu() {
             return true;
           } else {
             console.log(`Please select one of the options to continue!`);
+            return false;
           }
-          return false;
         },
       },
     ])
@@ -52,6 +52,9 @@ function menu() {
           break;
         case "Add A Department":
           addDept();
+          break;
+          case "Add A Role":
+          addRole();
           break;
         case "Add An Employee":
           addEmp();
