@@ -1,13 +1,11 @@
-INSERT INTO
-    department (name)
+INSERT INTO departments (name)
 VALUES
     ('IT'),
     ('Finance & Accounting'),
     ('Sales & Marketing'),
     ('Operations');
 
-INSERT INTO
-    roles (title, salary, department_id)
+INSERT INTO roles (title, salary, department_id)
 VALUES
     ('Full Stack Developer', 80000, 1),
     ('Software Engineer', 120000, 1),
@@ -18,8 +16,7 @@ VALUES
     ('Project Manager', 100000, 4),
     ('Operators Manager', 90000, 4);
 
-INSERT INTO
-    employees (first_name, last_name, role_id, manager_id)
+INSERT INTO employees (first_name, last_name, role_id, manager_id)
 VALUES
     ('Joon', 'Kim', 1, null),
     ('Abdiel', 'Villalobos', 2, 1),
