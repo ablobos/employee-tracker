@@ -209,7 +209,7 @@ const addEmp = () => {
       {
         type: "input",
         name: "managerID",
-        message: `What is the ID of tis employee's manager?`,
+        message: `What is the ID of this employee's manager?`,
       },
     ])
     .then((answers) => {
