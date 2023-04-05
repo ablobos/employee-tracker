@@ -20,7 +20,7 @@ function menu() {
         name: "options",
         message: "Select one of the following:",
         choices: [
-          "view All Departments",
+          "View All Departments",
           "View All Roles",
           "View All Employees",
           "Add A Department",
@@ -268,7 +268,7 @@ const update = () => {
         })
         .then((mappedID) => {
           db.query(
-            `UPDATE employees SET roles_ID=? WHERE id=?`,
+            `UPDATE employees SET role_ID=? WHERE id=?`,
             [mappedID, answers.employeeID],
             (err, res) => {
               if (err) {
