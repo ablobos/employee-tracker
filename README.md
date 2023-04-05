@@ -55,7 +55,7 @@ This project is a command-line application using Node.js, Inquirer, and MySQL to
 
 ## Preview
 
-x
+[Untitled_ Apr 5, 2023 8_49 AM.webm](https://user-images.githubusercontent.com/117130907/230085836-b024ce96-46ba-4fd1-98da-dfb3cb7dc869.webm)
 
 ## License
 
